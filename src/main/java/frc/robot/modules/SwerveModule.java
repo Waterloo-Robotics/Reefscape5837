@@ -3,7 +3,7 @@ package frc.robot.modules;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkBaseConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -23,8 +23,8 @@ public class SwerveModule {
     public SparkMax steer_spark;
 
     /* Motor Configurations */
-    public SparkBaseConfig drive_config;
-    public SparkBaseConfig steer_config;
+    public SparkMaxConfig drive_config;
+    public SparkMaxConfig steer_config;
 
     /* Encoders */
     public CANcoder steer_cancoder;
@@ -40,6 +40,8 @@ public class SwerveModule {
 
     public SwerveModule(int steer_id, int drive_id, int angle_id, boolean reverse_drive) {
         drive_spark = new SparkMax(drive_id, MotorType.kBrushless);
+        drive_config = new SparkMaxConfig();
+
         drive_config.idleMode(IdleMode.kBrake);
         drive_config.inverted(reverse_drive);
         /* By limiting the ramp rate to 0.5 seconds the peak current goes down from 120A to 80A */
@@ -57,7 +59,10 @@ public class SwerveModule {
         drive_spark.configure(drive_config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
         steer_spark = new SparkMax(steer_id, MotorType.kBrushless);
+        steer_config = new SparkMaxConfig();
         steer_config.inverted(true);
+        steer_spark.configure(steer_config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+
         steer_cancoder = new CANcoder(angle_id);
 
         drive_controller = new PIDController(0.02, 0, 0);

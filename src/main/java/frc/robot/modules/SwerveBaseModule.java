@@ -19,7 +19,7 @@ public class SwerveBaseModule {
     public SwerveModule[] modules;
     public SwerveModulePosition[] positions;
 
-    public static final double kWheelOffset = Units.inchesToMeters(13.5);
+    public static final double kWheelOffset = Units.inchesToMeters(12);
     public static final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(new Translation2d[] {
             new Translation2d(kWheelOffset, kWheelOffset),
             new Translation2d(kWheelOffset, -kWheelOffset),
@@ -66,7 +66,6 @@ public class SwerveBaseModule {
         lock_counter = 0;
         lock = false;
 
-        // this.odometry = new SwerveDriveOdometry(kinematics, null, positions);
     }
 
     private void lock() {
@@ -83,7 +82,7 @@ public class SwerveBaseModule {
         /* Get the inputs from the controller */
         double x = Math.pow(input_controller.getLeftY(), 2) * Math.signum(input_controller.getLeftY());
         double y = Math.pow(input_controller.getLeftX(), 2) * Math.signum(input_controller.getLeftX());
-        double rotation = Math.pow(input_controller.getRightX(), 2) * Math.signum(input_controller.getRightY());
+        double rotation = Math.pow(input_controller.getRightX(), 2) * Math.signum(input_controller.getRightX());
 
         double max_drive = 1;
         double min_drive = 0.3;

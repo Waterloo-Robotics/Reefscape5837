@@ -16,8 +16,8 @@ import frc.robot.modules.SwerveBaseModule.DriveBaseStates;
 public class Robot extends TimedRobot {
 
   XboxController driver_controller = new XboxController(2);
-  Joystick farmSim1 = new Joystick(4);
-  Joystick farmSim2 = new Joystick(5);
+  // Joystick farmSim1 = new Joystick(4);
+  // Joystick farmSim2 = new Joystick(5);
   SwerveBaseModule drivebase = new SwerveBaseModule(driver_controller);
 
   public Robot() {
@@ -50,8 +50,7 @@ public class Robot extends TimedRobot {
   public void testInit() {
 
     drivebase.gyro.reset();
-    drivebase.current_state = DriveBaseStates.TEST_STEER;
-    
+    drivebase.current_state = DriveBaseStates.XBOX;
 
   }
 
