@@ -9,7 +9,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-//import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -81,9 +81,9 @@ public class SwerveBaseModule {
 
     private void drive_xbox() {
         /* Get the inputs from the controller */
-        double x = Math.pow(input_controller.getRightY(), 2) * Math.signum(input_controller.getRightY());
-        double y = Math.pow(input_controller.getRightX(), 2) * Math.signum(input_controller.getRightX());
-        double rotation = Math.pow(input_controller.getLeftX(), 2) * Math.signum(input_controller.getLeftX());
+        double x = Math.pow(input_controller.getLeftY(), 2) * Math.signum(input_controller.getLeftY());
+        double y = Math.pow(input_controller.getLeftX(), 2) * Math.signum(input_controller.getLeftX());
+        double rotation = Math.pow(input_controller.getRightX(), 2) * Math.signum(input_controller.getRightY());
 
         double max_drive = 1;
         double min_drive = 0.3;
