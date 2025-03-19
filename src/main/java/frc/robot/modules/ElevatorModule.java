@@ -1,5 +1,8 @@
 package frc.robot.modules;
 
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.wpilibj.Encoder;
 
@@ -35,13 +38,20 @@ public class ElevatorModule {
     public final static ModuleStates initialState = ModuleStates.UNKNOWN;
 
     public SparkMax rightMotor;
-    public Encoder rightEncoder;
+    public RelativeEncoder rightEncoder;
+    public SparkMaxConfig rightConfig;
 
     public SparkMax leftMotor;
-    public Encoder leftEncoder;
+    public RelativeEncoder leftEncoder;
+    public SparkMaxConfig leftConfig;
 
-    public ElevatorModule(int outtakeMotorID, int backBeamID, int frontBeamID) {
 
+    public ElevatorModule(int rightMotorID, int leftMotorID) {
+                this.rightMotor = new SparkMax(rightMotorID, MotorType.kBrushless);
+                this.leftMotor = new SparkMax(leftMotorID, MotorType.kBrushless);
+                this.rightEncoder = this.rightMotor.getEncoder();
+                this.leftEncoder = this.leftMotor.getEncoder();
+                p
     }
 
     public void request_state(RequestStates state) {

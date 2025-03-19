@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.modules.OuttakeModule;
 import frc.robot.modules.SwerveBaseModule;
 import frc.robot.modules.SwerveBaseModule.DriveBaseStates;
 
@@ -20,11 +21,17 @@ public class Robot extends TimedRobot {
   // Joystick farmSim2 = new Joystick(5);
   SwerveBaseModule drivebase = new SwerveBaseModule(driver_controller);
 
+  OuttakeModule outtake = new OuttakeModule(22, 7, 6);
+
   public Robot() {
   }
 
   @Override
-  public void robotPeriodic() {}
+  public void robotPeriodic() {
+SmartDashboard.putBoolean("backBeam", outtake.backBeam.get() );
+SmartDashboard.putBoolean("frontBeam", outtake.frontBeam.get() );
+    
+  }
 
   @Override
   public void autonomousInit() {
@@ -56,7 +63,19 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {
+    if (driver_controller.getAButtonPressed()){
+      outtake.request_state(OuttakeModule.RequestStates.INTAKE);
+    }
+
+    if (driver_controller.getBButtonPressed()){
+      outtake.request_state(OuttakeModule.RequestStates.STOP);
+    }
+
+    if (driver_controller.getYButtonPressed()){
+      outtake.request_state(OuttakeModule.RequestStates.SCORE_CORAL);
+    }
     drivebase.update();
+    outtake.update();
   }
 
   @Override
