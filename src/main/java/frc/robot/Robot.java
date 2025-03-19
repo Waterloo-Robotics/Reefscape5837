@@ -4,15 +4,16 @@
 
 package frc.robot;
 
+import edu.wpi.first.units.measure.Power;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.modules.ElevatorModule;
 import frc.robot.modules.OuttakeModule;
 import frc.robot.modules.SwerveBaseModule;
 import frc.robot.modules.SwerveBaseModule.DriveBaseStates;
-
 
 public class Robot extends TimedRobot {
 
@@ -22,15 +23,19 @@ public class Robot extends TimedRobot {
   SwerveBaseModule drivebase = new SwerveBaseModule(driver_controller);
 
   OuttakeModule outtake = new OuttakeModule(22, 7, 6);
+  ElevatorModule elevator = new ElevatorModule(20, 21, driver_controller);
 
-  public Robot() {
+  public Robot()
+  {
   }
 
   @Override
   public void robotPeriodic() {
-SmartDashboard.putBoolean("backBeam", outtake.backBeam.get() );
-SmartDashboard.putBoolean("frontBeam", outtake.frontBeam.get() );
-    
+    SmartDashboard.putBoolean("backBeam", outtake.backBeam.get());
+    SmartDashboard.putBoolean("frontBeam", outtake.frontBeam.get());
+    SmartDashboard.putNumber("elevator Power", elevator.rightMotor.get());
+    SmartDashboard.putNumber("elevator encdor", elevator.rightEncoder.getPosition());
+
   }
 
   @Override
@@ -42,45 +47,62 @@ SmartDashboard.putBoolean("frontBeam", outtake.frontBeam.get() );
   }
 
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+  }
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+  }
 
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+  }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+  }
 
   @Override
   public void testInit() {
 
     drivebase.gyro.reset();
     drivebase.current_state = DriveBaseStates.XBOX;
+    elevator.currentState = ElevatorModule.ModuleStates.MANUAL;
 
   }
 
   @Override
   public void testPeriodic() {
-    if (driver_controller.getAButtonPressed()){
+    if (driver_controller.getAButtonPressed()) {
       outtake.request_state(OuttakeModule.RequestStates.INTAKE);
     }
 
-    if (driver_controller.getBButtonPressed()){
+    if (driver_controller.getBButtonPressed()) {
       outtake.request_state(OuttakeModule.RequestStates.STOP);
     }
 
-    if (driver_controller.getYButtonPressed()){
+    if (driver_controller.getYButtonPressed()) {
       outtake.request_state(OuttakeModule.RequestStates.SCORE_CORAL);
     }
-    drivebase.update();
+
+    if (driver_controller.getStartButtonPressed()) {
+      elevator.request_state(ElevatorModule.RequestStates.FIND_HOME);
+    }
+
+    if (driver_controller.getXButtonPressed()) {
+      elevator.rightEncoder.setPosition(0);
+      elevator.leftEncoder.setPosition(0);
+    }
+    // drivebase.update();
     outtake.update();
+    elevator.update();
   }
 
   @Override
-  public void simulationInit() {}
+  public void simulationInit() {
+  }
 
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+  }
 }
