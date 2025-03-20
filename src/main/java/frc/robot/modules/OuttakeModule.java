@@ -79,7 +79,7 @@ public class OuttakeModule {
 
                 if (!this.frontBeam.get()) {
                     this.currentState = ModuleStates.SCORING;
-                    this.outtakeMotor.set(.75);
+                    this.outtakeMotor.set(.6);
 
                 }
 

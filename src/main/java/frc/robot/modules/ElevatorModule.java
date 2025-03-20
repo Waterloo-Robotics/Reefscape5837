@@ -10,6 +10,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.Timer;
@@ -41,6 +42,7 @@ public class ElevatorModule {
     }
 
     public ModuleStates currentState;
+    public ModuleStates nextState;
     public RequestStates requestedState = RequestStates.FIND_HOME;
 
     public final static ModuleStates initialState = ModuleStates.UNKNOWN;
@@ -57,27 +59,46 @@ public class ElevatorModule {
 
     private Timer homing_timer;
 
-    double elevator_feedforward = 0.03;
+    double elevator_feedforward = 0.02;
+
+    /* Elevator PID */
+    public boolean elevator_found;
+
+    private double L1_HEIGHT = 10;
+    private double L2_HEIGHT = 23;
+    private double L3_HEIGHT = 53;
+    private double L4_HEIGHT = 99;
+
+    public PIDController pid_controller;
+    public double target_position;
 
     public ElevatorModule(int rightMotorID, int leftMotorID, XboxController drive_Controller) {
         this.currentState = initialState;
+        this.nextState = ModuleStates.UNKNOWN;
+
 
         this.rightMotor = new SparkMax(rightMotorID, MotorType.kBrushless);
         this.rightEncoder = this.rightMotor.getEncoder();
         this.rightConfig = new SparkMaxConfig();
-        this.rightMotor.configure(this.rightConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
         this.rightConfig.idleMode(IdleMode.kBrake);
+        this.rightConfig.openLoopRampRate(0.5);
+        this.rightMotor.configure(this.rightConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
         this.leftMotor = new SparkMax(leftMotorID, MotorType.kBrushless);
         this.leftEncoder = this.leftMotor.getEncoder();
         this.leftConfig = new SparkMaxConfig();
-        this.leftMotor.configure(this.leftConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
         this.leftConfig.follow(rightMotorID, true);
         this.leftConfig.idleMode(IdleMode.kBrake);
+        this.leftConfig.openLoopRampRate(0.5);
+        this.leftMotor.configure(this.leftConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
         this.controller = drive_Controller;
 
         this.homing_timer = new Timer();
+
+        this.elevator_found = false;
+        this.pid_controller = new PIDController(0.04, 0, 0.003);
+        target_position = 0;
 
     }
 
@@ -92,10 +113,13 @@ public class ElevatorModule {
                 break;
 
             case HOME:
-
+                nextState = ModuleStates.HOME;
+                currentState = ModuleStates.MOVING;
+                target_position = 0;
                 break;
 
             case MANUAL:
+                currentState = ModuleStates.MANUAL;
 
                 break;
 
@@ -104,19 +128,27 @@ public class ElevatorModule {
                 break;
 
             case L1:
-
+                nextState = ModuleStates.L1;
+                currentState = ModuleStates.MOVING;
+                target_position = L1_HEIGHT;
                 break;
 
             case L2:
-
+                nextState = ModuleStates.L2;
+                currentState = ModuleStates.MOVING;
+                target_position = L2_HEIGHT;
                 break;
 
             case L3:
-
+                nextState = ModuleStates.L3;
+                currentState = ModuleStates.MOVING;
+                target_position = L3_HEIGHT;
                 break;
 
             case L4:
-
+                nextState = ModuleStates.L4;
+                currentState = ModuleStates.MOVING;
+                target_position = L4_HEIGHT;
                 break;
 
         }
@@ -143,6 +175,7 @@ public class ElevatorModule {
 
                 if ((rightEncoder.getVelocity() < 5 ) && homing_timer.hasElapsed(0.5))
                 {
+                    elevator_found = true;
                     homing_timer.stop();
                     rightMotor.set(elevator_feedforward);
 
@@ -178,6 +211,20 @@ public class ElevatorModule {
                 break;
 
             case MOVING:
+                if (elevator_found)
+                {
+                    double pid_term = pid_controller.calculate(rightEncoder.getPosition(), target_position);
+
+                    double auto_power = MathUtil.clamp(pid_term + elevator_feedforward, -0.9, 0.9);
+
+                    rightMotor.set(auto_power);
+
+                    if (pid_controller.atSetpoint())
+                    {
+                        currentState = nextState;
+                        rightMotor.set(elevator_feedforward);
+                    }
+                }
 
                 break;
 

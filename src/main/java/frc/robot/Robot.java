@@ -36,6 +36,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("elevator Power", elevator.rightMotor.get());
     SmartDashboard.putNumber("elevator encdor", elevator.rightEncoder.getPosition());
 
+    SmartDashboard.putNumber("Target Position", elevator.target_position);
   }
 
   @Override
@@ -87,6 +88,32 @@ public class Robot extends TimedRobot {
 
     if (driver_controller.getStartButtonPressed()) {
       elevator.request_state(ElevatorModule.RequestStates.FIND_HOME);
+    }
+
+    if (driver_controller.getPOV() == 180) {
+      elevator.request_state(ElevatorModule.RequestStates.L1);
+    }
+
+    if (driver_controller.getPOV() == 90) {
+      elevator.request_state(ElevatorModule.RequestStates.L2);
+    }
+
+    if (driver_controller.getPOV() == 0) {
+      elevator.request_state(ElevatorModule.RequestStates.L3);
+    }
+
+    if (driver_controller.getPOV() == 270) {
+      elevator.request_state(ElevatorModule.RequestStates.L4);
+    }
+
+    if (driver_controller.getLeftBumperButtonPressed()) {
+      elevator.request_state(ElevatorModule.RequestStates.HOME);
+    }
+
+    
+
+    if (driver_controller.getRightBumperButtonPressed()) {
+      elevator.request_state(ElevatorModule.RequestStates.MANUAL);
     }
 
     if (driver_controller.getXButtonPressed()) {
