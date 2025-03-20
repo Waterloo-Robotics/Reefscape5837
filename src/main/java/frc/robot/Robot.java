@@ -17,13 +17,13 @@ import frc.robot.modules.SwerveBaseModule.DriveBaseStates;
 
 public class Robot extends TimedRobot {
 
-  XboxController driver_controller = new XboxController(2);
-  // Joystick farmSim1 = new Joystick(4);
-  // Joystick farmSim2 = new Joystick(5);
+  XboxController driver_controller = new XboxController(1);
+  Joystick farmSim1 = new Joystick(2);
+  Joystick farmSim2 = new Joystick(3);
   SwerveBaseModule drivebase = new SwerveBaseModule(driver_controller);
 
   OuttakeModule outtake = new OuttakeModule(22, 7, 6);
-  ElevatorModule elevator = new ElevatorModule(20, 21, driver_controller);
+  ElevatorModule elevator = new ElevatorModule(20, 21, farmSim1);
 
   public Robot()
   {
@@ -36,7 +36,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("elevator Power", elevator.rightMotor.get());
     SmartDashboard.putNumber("elevator encdor", elevator.rightEncoder.getPosition());
 
-    SmartDashboard.putNumber("Target Position", elevator.target_position);
   }
 
   @Override
@@ -49,10 +48,66 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    drivebase.gyro.reset();
+
+    drivebase.current_state = DriveBaseStates.XBOX;
+    elevator.currentState = ElevatorModule.ModuleStates.MANUAL;
   }
 
   @Override
   public void teleopPeriodic() {
+    // Elevator
+    if (farmSim2.getRawButtonPressed(5) && outtake.backBeam.get()) {
+      elevator.request_state(ElevatorModule.RequestStates.HOME);
+    }
+
+    if (farmSim1.getRawButtonPressed(12) && outtake.backBeam.get()) {
+      elevator.request_state(ElevatorModule.RequestStates.L1);
+    }
+
+    if (farmSim1.getRawButtonPressed(11) && outtake.backBeam.get()) {
+      elevator.request_state(ElevatorModule.RequestStates.L2);
+    }
+
+    if (farmSim1.getRawButtonPressed(6) && outtake.backBeam.get()) {
+      elevator.request_state(ElevatorModule.RequestStates.L3);
+    }
+
+    if (farmSim1.getRawButtonPressed(1) && outtake.backBeam.get()) {
+      elevator.request_state(ElevatorModule.RequestStates.L4);
+    }
+
+    if (farmSim2.getRawButtonPressed(6)) {
+      elevator.request_state(ElevatorModule.RequestStates.FIND_HOME);
+    }
+
+    if (farmSim2.getRawButtonPressed(7)) {
+      elevator.request_state(ElevatorModule.RequestStates.MANUAL);
+    }
+
+
+    //Outtake
+
+    if (farmSim1.getRawButtonPressed(14)) {
+      outtake.request_state(OuttakeModule.RequestStates.INTAKE);
+    }
+
+    if (farmSim1.getRawButtonPressed(16)) {
+      outtake.request_state(OuttakeModule.RequestStates.STOP);
+    }
+
+    if (driver_controller.getRightTriggerAxis() > 0.25) {
+      outtake.request_state(OuttakeModule.RequestStates.SCORE_CORAL);
+    }
+
+
+
+
+    
+  
+    drivebase.update();
+    outtake.update();
+    elevator.update();
   }
 
   @Override

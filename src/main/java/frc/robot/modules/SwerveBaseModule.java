@@ -12,6 +12,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.kauailabs.navx.frc.AHRS;
 
@@ -38,6 +39,8 @@ public class SwerveBaseModule {
     public AHRS gyro;
 
     private double max_drive_speed;
+
+    public boolean field_centric = true;
 
     public SwerveBaseModule(XboxController drive_controller) {
         /* Create the four swerve modules passing in each corner's CAN ID */
@@ -66,6 +69,8 @@ public class SwerveBaseModule {
         lock_counter = 0;
         lock = false;
 
+        this.field_centric = true;
+
     }
 
     private void lock() {
@@ -79,6 +84,17 @@ public class SwerveBaseModule {
     }
 
     private void drive_xbox() {
+        /* Toggle Field Centric */
+        if (input_controller.getRightStickButtonPressed()) {
+            this.field_centric = !this.field_centric;
+        }
+
+        if (!field_centric) {
+            input_controller.setRumble(RumbleType.kBothRumble, 0.25);
+        } else {
+            input_controller.setRumble(RumbleType.kBothRumble, 0);
+        }
+
         /* Get the inputs from the controller */
         double x = Math.pow(input_controller.getLeftY(), 2) * Math.signum(input_controller.getLeftY());
         double y = Math.pow(input_controller.getLeftX(), 2) * Math.signum(input_controller.getLeftX());
@@ -131,7 +147,12 @@ public class SwerveBaseModule {
             * "states" ie rotation and drive velocity.
             */
             ChassisSpeeds speeds = new ChassisSpeeds(x_velocity_m_s, y_velocity_m_s, rotational_vel);
-            speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, gyro.getRotation2d());
+
+            if (field_centric) {
+                speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, gyro.getRotation2d());
+            } else {
+                speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, new Rotation2d());
+            }
             SwerveModuleState[] states = kinematics.toSwerveModuleStates(speeds);
 
             /* Send the new states to each swerve module */

@@ -12,6 +12,7 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -55,7 +56,7 @@ public class ElevatorModule {
     public RelativeEncoder leftEncoder;
     public SparkMaxConfig leftConfig;
 
-    public XboxController controller;
+    public Joystick controller;
 
     private Timer homing_timer;
 
@@ -72,7 +73,7 @@ public class ElevatorModule {
     public PIDController pid_controller;
     public double target_position;
 
-    public ElevatorModule(int rightMotorID, int leftMotorID, XboxController drive_Controller) {
+    public ElevatorModule(int rightMotorID, int leftMotorID, Joystick drive_Controller) {
         this.currentState = initialState;
         this.nextState = ModuleStates.UNKNOWN;
 
@@ -163,8 +164,8 @@ public class ElevatorModule {
                 break;
 
             case MANUAL:
-                double power = MathUtil.applyDeadband(this.controller.getLeftX(), 0.15, 1);
-                power = MathUtil.clamp(power, -0.2, .2) / 2;
+                double power = MathUtil.applyDeadband(-this.controller.getY(), 0.15, 1);
+                power = MathUtil.clamp(power, -0.4, .4);
                 rightMotor.set(power + elevator_feedforward);
 
                 break;
