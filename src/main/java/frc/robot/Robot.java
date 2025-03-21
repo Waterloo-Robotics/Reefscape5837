@@ -107,22 +107,27 @@ public class Robot extends TimedRobot {
     // Elevator
     if (farmSim2.getRawButtonPressed(5) && outtake.backBeam.get()) {
       elevator.request_state(ElevatorModule.RequestStates.HOME);
+      drivebase.set_max_drive_speed(1);
     }
 
     if (farmSim1.getRawButtonPressed(12) && outtake.backBeam.get()) {
       elevator.request_state(ElevatorModule.RequestStates.L1);
+      drivebase.set_max_drive_speed(1);
     }
 
     if (farmSim1.getRawButtonPressed(11) && outtake.backBeam.get()) {
       elevator.request_state(ElevatorModule.RequestStates.L2);
+      drivebase.set_max_drive_speed(0.60);
     }
 
     if (farmSim1.getRawButtonPressed(6) && outtake.backBeam.get()) {
       elevator.request_state(ElevatorModule.RequestStates.L3);
+      drivebase.set_max_drive_speed(0.45);
     }
 
     if (farmSim1.getRawButtonPressed(1) && outtake.backBeam.get()) {
       elevator.request_state(ElevatorModule.RequestStates.L4);
+      drivebase.set_max_drive_speed(0.45);
     }
 
     if (farmSim1.getRawButtonPressed(5)) {
@@ -134,7 +139,6 @@ public class Robot extends TimedRobot {
     }
 
     // Outtake
-
     if (farmSim1.getRawButtonPressed(14)) {
       outtake.request_state(OuttakeModule.RequestStates.INTAKE);
     }
