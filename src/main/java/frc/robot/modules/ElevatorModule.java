@@ -83,6 +83,7 @@ public class ElevatorModule {
         this.rightConfig = new SparkMaxConfig();
         this.rightConfig.idleMode(IdleMode.kBrake);
         this.rightConfig.openLoopRampRate(0.5);
+        this.rightConfig.smartCurrentLimit(20);
         this.rightMotor.configure(this.rightConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
         this.leftMotor = new SparkMax(leftMotorID, MotorType.kBrushless);
@@ -91,6 +92,7 @@ public class ElevatorModule {
         this.leftConfig.follow(rightMotorID, true);
         this.leftConfig.idleMode(IdleMode.kBrake);
         this.leftConfig.openLoopRampRate(0.5);
+        this.leftConfig.smartCurrentLimit(20);
         this.leftMotor.configure(this.leftConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
 
         this.controller = drive_Controller;

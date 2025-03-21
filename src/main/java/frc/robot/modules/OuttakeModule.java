@@ -2,7 +2,10 @@ package frc.robot.modules;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -34,6 +37,7 @@ public class OuttakeModule {
     public final static ModuleStates initialState = ModuleStates.EMPTY;
 
     public SparkMax outtakeMotor;
+    public SparkMaxConfig outtakeConfig;
     public RelativeEncoder outtakeEncoder;
 
     public DigitalInput backBeam;
@@ -43,6 +47,12 @@ public class OuttakeModule {
 
         this.currentState = initialState;
         this.outtakeMotor = new SparkMax(outtakeMotorID, MotorType.kBrushless);
+
+        this.outtakeConfig = new SparkMaxConfig();
+        this.outtakeConfig.smartCurrentLimit(9);
+        this.outtakeMotor.configure(this.outtakeConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+
+        
         this.outtakeEncoder = this.outtakeMotor.getEncoder();
 
         this.backBeam = new DigitalInput(backBeamID);
@@ -66,7 +76,6 @@ public class OuttakeModule {
                 if (this.frontBeam.get()) {
                     this.currentState = ModuleStates.WAITING_FOR_CORAL;
                     this.outtakeMotor.set(.75);
-
                 }
 
                 break;
@@ -106,9 +115,8 @@ public class OuttakeModule {
 
             case WAITING_FOR_CORAL:
                 if (!this.backBeam.get()) {
-                    this.outtakeMotor.set(0.25);
+                    this.outtakeMotor.set(0.3);
                     this.currentState = ModuleStates.POSITIONING_CORAL;
-
                 }
 
                 break;

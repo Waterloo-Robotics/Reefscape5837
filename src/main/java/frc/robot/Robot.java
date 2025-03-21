@@ -35,6 +35,9 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("frontBeam", outtake.frontBeam.get());
     SmartDashboard.putNumber("elevator Power", elevator.rightMotor.get());
     SmartDashboard.putNumber("elevator encdor", elevator.rightEncoder.getPosition());
+    SmartDashboard.putNumber("R Elevator Current", elevator.rightMotor.getOutputCurrent());
+    SmartDashboard.putNumber("L Elevator Current", elevator.leftMotor.getOutputCurrent());
+    SmartDashboard.putNumber("Outtake", outtake.outtakeMotor.getOutputCurrent());
 
   }
 
