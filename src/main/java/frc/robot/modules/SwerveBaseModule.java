@@ -106,8 +106,8 @@ public class SwerveBaseModule {
         double max_rot = 1;
         double min_rot = 0.3;
 
-        double drive_speed_multiplier = 0.5;
-        double rotation_speed_multiplier = 0.75;
+        double drive_speed_multiplier = 0.75;
+        double rotation_speed_multiplier = 1;
 
         SmartDashboard.putNumber("Drive Multiplier", drive_speed_multiplier);
 
@@ -163,10 +163,10 @@ public class SwerveBaseModule {
 
     private void straight() {
         SwerveModuleState[] states = {
-                new SwerveModuleState(input_controller.getLeftY()*0.1, Rotation2d.fromDegrees(0)),
-                new SwerveModuleState(input_controller.getLeftY()*0.1, Rotation2d.fromDegrees(0)),
-                new SwerveModuleState(input_controller.getLeftY()*0.1, Rotation2d.fromDegrees(0)),
-                new SwerveModuleState(input_controller.getLeftY()*0.1, Rotation2d.fromDegrees(0))
+                new SwerveModuleState(0.2, Rotation2d.fromDegrees(180)),
+                new SwerveModuleState(0.2, Rotation2d.fromDegrees(180)),
+                new SwerveModuleState(0.2, Rotation2d.fromDegrees(180)),
+                new SwerveModuleState(0.2, Rotation2d.fromDegrees(180))
         };
         setModuleStates(states);
     }

@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.units.measure.Power;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -24,9 +25,10 @@ public class Robot extends TimedRobot {
 
   OuttakeModule outtake = new OuttakeModule(22, 7, 6);
   ElevatorModule elevator = new ElevatorModule(20, 21, farmSim1);
+  int autoStep = 1;
+  Timer autoTimer = new Timer();
 
-  public Robot()
-  {
+  public Robot() {
   }
 
   @Override
@@ -43,10 +45,53 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    elevator.elevator_found = true;
+    autoTimer.reset();
+    drivebase.gyro.reset();
+    drivebase.current_state = DriveBaseStates.STOP;
+    elevator.currentState = ElevatorModule.ModuleStates.MANUAL;
+    autoStep = 1;
+
   }
 
   @Override
   public void autonomousPeriodic() {
+    if (autoStep == 1) {
+      drivebase.current_state = DriveBaseStates.STRAIGHT;
+      autoTimer.start();
+      autoStep = 2;
+    }
+
+    if (autoStep == 2) {
+      if (autoTimer.hasElapsed(2)) {
+        drivebase.current_state = DriveBaseStates.STOP;
+        autoTimer.stop();
+        autoStep = 3;
+      }
+    }
+
+    if (autoStep == 3) {
+      elevator.request_state(ElevatorModule.RequestStates.L4);
+      autoStep = 4;
+    }
+
+    if (autoStep == 4) {
+      if (elevator.currentState == ElevatorModule.ModuleStates.L4) {
+        outtake.request_state(OuttakeModule.RequestStates.SCORE_CORAL);
+        autoStep = 5;
+      }
+    }
+
+    if (autoStep == 5) {
+      if (outtake.currentState == OuttakeModule.ModuleStates.EMPTY){
+        elevator.request_state(ElevatorModule.RequestStates.HOME);
+        autoStep = 6;
+      }
+    }
+
+    drivebase.update();
+    elevator.update();
+    outtake.update();
   }
 
   @Override
@@ -80,7 +125,7 @@ public class Robot extends TimedRobot {
       elevator.request_state(ElevatorModule.RequestStates.L4);
     }
 
-    if (farmSim2.getRawButtonPressed(6)) {
+    if (farmSim1.getRawButtonPressed(5)) {
       elevator.request_state(ElevatorModule.RequestStates.FIND_HOME);
     }
 
@@ -88,8 +133,7 @@ public class Robot extends TimedRobot {
       elevator.request_state(ElevatorModule.RequestStates.MANUAL);
     }
 
-
-    //Outtake
+    // Outtake
 
     if (farmSim1.getRawButtonPressed(14)) {
       outtake.request_state(OuttakeModule.RequestStates.INTAKE);
@@ -103,11 +147,6 @@ public class Robot extends TimedRobot {
       outtake.request_state(OuttakeModule.RequestStates.SCORE_CORAL);
     }
 
-
-
-
-    
-  
     drivebase.update();
     outtake.update();
     elevator.update();
@@ -167,8 +206,6 @@ public class Robot extends TimedRobot {
     if (driver_controller.getLeftBumperButtonPressed()) {
       elevator.request_state(ElevatorModule.RequestStates.HOME);
     }
-
-    
 
     if (driver_controller.getRightBumperButtonPressed()) {
       elevator.request_state(ElevatorModule.RequestStates.MANUAL);

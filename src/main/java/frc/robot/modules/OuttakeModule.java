@@ -49,10 +49,10 @@ public class OuttakeModule {
         this.outtakeMotor = new SparkMax(outtakeMotorID, MotorType.kBrushless);
 
         this.outtakeConfig = new SparkMaxConfig();
-        this.outtakeConfig.smartCurrentLimit(9);
-        this.outtakeMotor.configure(this.outtakeConfig, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+        this.outtakeConfig.smartCurrentLimit(24);
+        this.outtakeMotor.configure(this.outtakeConfig, ResetMode.kNoResetSafeParameters,
+                PersistMode.kPersistParameters);
 
-        
         this.outtakeEncoder = this.outtakeMotor.getEncoder();
 
         this.backBeam = new DigitalInput(backBeamID);
