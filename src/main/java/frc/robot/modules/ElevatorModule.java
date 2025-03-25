@@ -60,15 +60,16 @@ public class ElevatorModule {
 
     private Timer homing_timer;
 
-    double elevator_feedforward = 0.02;
+
+    double elevator_feedforward = 0.0;
 
     /* Elevator PID */
     public boolean elevator_found;
 
     private double L1_HEIGHT = 10;
-    private double L2_HEIGHT = 23;
-    private double L3_HEIGHT = 53;
-    private double L4_HEIGHT = 99;
+    private double L2_HEIGHT = 25;
+    private double L3_HEIGHT = 54;
+    private double L4_HEIGHT = 99.5;
 
     public PIDController pid_controller;
     public double target_position;
@@ -100,7 +101,8 @@ public class ElevatorModule {
         this.homing_timer = new Timer();
 
         this.elevator_found = false;
-        this.pid_controller = new PIDController(0.04, 0, 0.003);
+        this.pid_controller = new PIDController(0.043, 0, 0.0032);
+        this.pid_controller.setTolerance(1);
         target_position = 0;
 
     }
@@ -162,12 +164,13 @@ public class ElevatorModule {
 
         switch (currentState) {
             case UNKNOWN:
+                    rightMotor.set(elevator_feedforward);
 
                 break;
 
             case MANUAL:
                 double power = MathUtil.applyDeadband(-this.controller.getY(), 0.15, 1);
-                power = MathUtil.clamp(power, -0.4, .4);
+                power = MathUtil.clamp(power, -0.3, .3);
                 rightMotor.set(power + elevator_feedforward);
 
                 break;

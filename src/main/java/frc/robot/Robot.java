@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.modules.DeAligifierModule;
 import frc.robot.modules.ElevatorModule;
 import frc.robot.modules.OuttakeModule;
 import frc.robot.modules.SwerveBaseModule;
@@ -25,6 +26,7 @@ public class Robot extends TimedRobot {
 
   OuttakeModule outtake = new OuttakeModule(22, 7, 6);
   ElevatorModule elevator = new ElevatorModule(20, 21, farmSim1);
+  DeAligifierModule DeAligifier = new DeAligifierModule(0, farmSim2);
   int autoStep = 1;
   Timer autoTimer = new Timer();
 
@@ -83,7 +85,7 @@ public class Robot extends TimedRobot {
     }
 
     if (autoStep == 5) {
-      if (outtake.currentState == OuttakeModule.ModuleStates.EMPTY){
+      if (outtake.currentState == OuttakeModule.ModuleStates.EMPTY) {
         elevator.request_state(ElevatorModule.RequestStates.HOME);
         autoStep = 6;
       }
@@ -122,12 +124,12 @@ public class Robot extends TimedRobot {
 
     if (farmSim1.getRawButtonPressed(6) && outtake.backBeam.get()) {
       elevator.request_state(ElevatorModule.RequestStates.L3);
-      drivebase.set_max_drive_speed(0.45);
+      drivebase.set_max_drive_speed(0.4);
     }
 
     if (farmSim1.getRawButtonPressed(1) && outtake.backBeam.get()) {
       elevator.request_state(ElevatorModule.RequestStates.L4);
-      drivebase.set_max_drive_speed(0.45);
+      drivebase.set_max_drive_speed(0.1);
     }
 
     if (farmSim1.getRawButtonPressed(5)) {
@@ -149,6 +151,16 @@ public class Robot extends TimedRobot {
 
     if (driver_controller.getRightTriggerAxis() > 0.25) {
       outtake.request_state(OuttakeModule.RequestStates.SCORE_CORAL);
+    }
+
+    // DeAligifier
+
+    if (farmSim2.getRawButtonPressed(7)) {
+      DeAligifier.request_state(DeAligifierModule.RequestStates.MANUAL);
+
+      if (elevator.currentState == ElevatorModule.ModuleStates.MANUAL) {
+          elevator.currentState = ElevatorModule.ModuleStates.UNKNOWN;
+      }
     }
 
     drivebase.update();

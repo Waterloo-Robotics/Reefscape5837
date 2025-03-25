@@ -88,7 +88,7 @@ public class OuttakeModule {
 
                 if (!this.frontBeam.get()) {
                     this.currentState = ModuleStates.SCORING;
-                    this.outtakeMotor.set(.6);
+                    this.outtakeMotor.set(.5);
 
                 }
 
@@ -115,7 +115,7 @@ public class OuttakeModule {
 
             case WAITING_FOR_CORAL:
                 if (!this.backBeam.get()) {
-                    this.outtakeMotor.set(0.3);
+                    this.outtakeMotor.set(0.25);
                     this.currentState = ModuleStates.POSITIONING_CORAL;
                 }
 
