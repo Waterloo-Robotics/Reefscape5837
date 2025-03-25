@@ -44,9 +44,9 @@ public class DeAligifierModule {
     public SparkMaxConfig DeAligifierConfig;
     public RelativeEncoder DeAligifierEncoder;
 
-    private double IN = 5;
-    private double LOW = 10;
-    private double HIGH = 20;
+    private double IN = 20;
+    private double LOW = 30;
+    private double HIGH = 45;
 
     public PIDController pid_controller;
     public double target_position;
@@ -54,25 +54,26 @@ public class DeAligifierModule {
 
     public boolean DeAligifier_found;
 
-
     private Timer homing_timer;
 
-    public DeAligifierModule(int DeAligifierMotorID, Joystick drive_Controller){
+    public DeAligifierModule(int DeAligifierMotorID, Joystick drive_Controller) {
         this.currentState = initialState;
         this.DeAligifierMotor = new SparkMax(DeAligifierMotorID, MotorType.kBrushless);
 
         this.DeAligifierConfig = new SparkMaxConfig();
-        this.DeAligifierConfig.smartCurrentLimit(24);
+        this.DeAligifierConfig.smartCurrentLimit(20);
+        this.DeAligifierConfig.inverted(false);
+
         this.DeAligifierMotor.configure(this.DeAligifierConfig, ResetMode.kNoResetSafeParameters,
                 PersistMode.kPersistParameters);
 
         this.DeAligifierEncoder = this.DeAligifierMotor.getEncoder();
 
-        
-        this.controller = drive_Controller;
-        this.pid_controller = new PIDController(0.043, 0, 0.0032);
-        this.pid_controller.setTolerance(1);
+        this.homing_timer = new Timer();
 
+        this.controller = drive_Controller;
+        this.pid_controller = new PIDController(0.02, 0, 0);
+        this.pid_controller.setTolerance(1);
     }
 
     public void request_state(RequestStates state) {
@@ -80,7 +81,7 @@ public class DeAligifierModule {
 
         switch (state) {
             case FIND_HOME:
-                currentState = ModuleStates.UNKNOWN;
+                currentState = ModuleStates.FIND_HOME;
                 homing_timer.restart();
                 break;
 
@@ -120,76 +121,54 @@ public class DeAligifierModule {
     public void update() {
         switch (currentState) {
 
-            case MOVING:
+            case FIND_HOME:
+                // Drive the motor down
+                DeAligifierMotor.set(-0.1);
 
-            if (DeAligifier_found)
+                // Wait for it to hit the bottom
+                if ((DeAligifierMotor.getOutputCurrent() > 2) && homing_timer.hasElapsed(0.1))
                 {
-                    double pid_term = pid_controller.calculate(DeAligifierEncoder.getPosition(), target_position);
+                    DeAligifier_found = true;
+                    homing_timer.stop();
+                    DeAligifierMotor.set(0);
 
-                    double auto_power = MathUtil.clamp(pid_term , -0.9, 0.9);
-
-                    DeAligifierMotor.set(auto_power);
-
-                    if (pid_controller.atSetpoint())
-                    {
-                        currentState = nextState;
-                    }
+                    DeAligifierEncoder.setPosition(0);
+                    this.request_state(RequestStates.HOME);
                 }
 
-            break;
-
-
-
-
-            case FIND_HOME:
-
-            break;
-
-
-
+                break;
 
             case UNKNOWN:
 
-            break;
-
-
-
-
-            case HOME:
-
-            break;
-
-
-
+                break;
 
             case MANUAL:
-            double power = MathUtil.applyDeadband(-this.controller.getY(), 0.15, 1);
-                power = MathUtil.clamp(power, -0.3, .3);
-                DeAligifierMotor.set(power );
+                double power = MathUtil.applyDeadband(this.controller.getY(), 0.15, 1);
+                power = MathUtil.clamp(power, -0.3, 0.3);
+                DeAligifierMotor.set(power);
 
-            break;
+                break;
 
-
-
-
+            case MOVING:
+            case HOME:
             case IN:
-
-            break;
-
-
-
-
             case LOW:
-
-            break;
-
-
-
-
             case HIGH:
 
-            break;
+                if (DeAligifier_found) {
+                    double pid_term = pid_controller.calculate(DeAligifierEncoder.getPosition(), target_position);
 
+                    double auto_power = MathUtil.clamp(pid_term, -0.9, 0.9);
+
+                    DeAligifierMotor.set(auto_power);
+
+                    if (pid_controller.atSetpoint()) {
+                        currentState = nextState;
+                        DeAligifierMotor.set(0);
+                    }
+                }
+
+                break;
 
         }
 

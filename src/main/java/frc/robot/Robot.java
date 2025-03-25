@@ -4,12 +4,10 @@
 
 package frc.robot;
 
-import edu.wpi.first.units.measure.Power;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.modules.DeAligifierModule;
 import frc.robot.modules.ElevatorModule;
@@ -26,7 +24,7 @@ public class Robot extends TimedRobot {
 
   OuttakeModule outtake = new OuttakeModule(22, 7, 6);
   ElevatorModule elevator = new ElevatorModule(20, 21, farmSim1);
-  // DeAligifierModule DeAligifier = new DeAligifierModule(0, farmSim2);
+  DeAligifierModule DeAligifier = new DeAligifierModule(25, farmSim1);
   int autoStep = 1;
   Timer autoTimer = new Timer();
 
@@ -44,6 +42,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Outtake", outtake.outtakeMotor.getOutputCurrent());
 
     SmartDashboard.putString("Elevator State", elevator.currentState.name());
+    SmartDashboard.putNumber("DeAligifier encdor", DeAligifier.DeAligifierEncoder.getPosition());
 
   }
 
@@ -104,6 +103,7 @@ public class Robot extends TimedRobot {
 
     drivebase.current_state = DriveBaseStates.XBOX;
     elevator.request_state(ElevatorModule.RequestStates.FIND_HOME);
+    DeAligifier.request_state(DeAligifierModule.RequestStates.FIND_HOME);
   }
 
   @Override
@@ -140,9 +140,9 @@ public class Robot extends TimedRobot {
 
     if (farmSim2.getRawButtonPressed(7)) {
       elevator.request_state(ElevatorModule.RequestStates.MANUAL);
-      // if (DeAligifier.currentState == DeAligifierModule.ModuleStates.MANUAL) {
-      //   DeAligifier.currentState = DeAligifierModule.ModuleStates.UNKNOWN;
-      // }
+      if (DeAligifier.currentState == DeAligifierModule.ModuleStates.MANUAL) {
+        DeAligifier.currentState = DeAligifierModule.ModuleStates.UNKNOWN;
+      }
 
     }
 
@@ -161,33 +161,38 @@ public class Robot extends TimedRobot {
 
     // DeAligifier
 
-    if (farmSim2.getRawButtonPressed(7)) {
-      // DeAligifier.request_state(DeAligifierModule.RequestStates.MANUAL);
+    if (farmSim1.getRawButtonPressed(15)) {
+      DeAligifier.request_state(DeAligifierModule.RequestStates.MANUAL);
 
       if (elevator.currentState == ElevatorModule.ModuleStates.MANUAL) {
         elevator.currentState = ElevatorModule.ModuleStates.UNKNOWN;
       }
     }
 
-    // if (farmSim1.getRawButtonPressed(14)) {
-    //   DeAligifier.request_state(DeAligifierModule.RequestStates.IN);
-    // }
+    if (farmSim2.getRawButtonPressed(1)) {
+      DeAligifier.request_state(DeAligifierModule.RequestStates.HOME);
+    }
 
-    // if (farmSim1.getRawButtonPressed(16)) {
-    //   DeAligifier.request_state(DeAligifierModule.RequestStates.LOW);
-    // }
+    if (farmSim2.getRawButtonPressed(2)) {
+      DeAligifier.request_state(DeAligifierModule.RequestStates.IN);
+    }
 
-    // if (farmSim1.getRawButtonPressed(16)) {
-    //   DeAligifier.request_state(DeAligifierModule.RequestStates.HIGH);
-    // }
+    if (farmSim2.getRawButtonPressed(3)) {
+      DeAligifier.request_state(DeAligifierModule.RequestStates.LOW);
+    }
 
-    // if (farmSim1.getRawButtonPressed(16)) {
-    //   DeAligifier.request_state(DeAligifierModule.RequestStates.HOME);
-    // }
+    if (farmSim2.getRawButtonPressed(4)) {
+      DeAligifier.request_state(DeAligifierModule.RequestStates.HIGH);
+    }
+
+    if (farmSim1.getRawButtonPressed(10)) {
+      DeAligifier.request_state(DeAligifierModule.RequestStates.FIND_HOME);
+    }
 
     drivebase.update();
     outtake.update();
     elevator.update();
+    DeAligifier.update();
   }
 
   @Override
