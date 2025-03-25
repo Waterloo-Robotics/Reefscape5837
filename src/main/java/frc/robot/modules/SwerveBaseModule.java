@@ -163,10 +163,10 @@ public class SwerveBaseModule {
 
     private void straight() {
         SwerveModuleState[] states = {
-                new SwerveModuleState(0.2, Rotation2d.fromDegrees(180)),
-                new SwerveModuleState(0.2, Rotation2d.fromDegrees(180)),
-                new SwerveModuleState(0.2, Rotation2d.fromDegrees(180)),
-                new SwerveModuleState(0.2, Rotation2d.fromDegrees(180))
+                new SwerveModuleState(0.75, Rotation2d.fromDegrees(180)),
+                new SwerveModuleState(0.75, Rotation2d.fromDegrees(180)),
+                new SwerveModuleState(0.75, Rotation2d.fromDegrees(180)),
+                new SwerveModuleState(0.75, Rotation2d.fromDegrees(180))
         };
         setModuleStates(states);
     }

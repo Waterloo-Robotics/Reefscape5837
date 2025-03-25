@@ -26,7 +26,7 @@ public class Robot extends TimedRobot {
 
   OuttakeModule outtake = new OuttakeModule(22, 7, 6);
   ElevatorModule elevator = new ElevatorModule(20, 21, farmSim1);
-  DeAligifierModule DeAligifier = new DeAligifierModule(0, farmSim2);
+  // DeAligifierModule DeAligifier = new DeAligifierModule(0, farmSim2);
   int autoStep = 1;
   Timer autoTimer = new Timer();
 
@@ -42,6 +42,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("R Elevator Current", elevator.rightMotor.getOutputCurrent());
     SmartDashboard.putNumber("L Elevator Current", elevator.leftMotor.getOutputCurrent());
     SmartDashboard.putNumber("Outtake", outtake.outtakeMotor.getOutputCurrent());
+
+    SmartDashboard.putString("Elevator State", elevator.currentState.name());
 
   }
 
@@ -101,7 +103,7 @@ public class Robot extends TimedRobot {
     drivebase.gyro.reset();
 
     drivebase.current_state = DriveBaseStates.XBOX;
-    elevator.currentState = ElevatorModule.ModuleStates.MANUAL;
+    elevator.request_state(ElevatorModule.RequestStates.FIND_HOME);
   }
 
   @Override
@@ -138,6 +140,10 @@ public class Robot extends TimedRobot {
 
     if (farmSim2.getRawButtonPressed(7)) {
       elevator.request_state(ElevatorModule.RequestStates.MANUAL);
+      // if (DeAligifier.currentState == DeAligifierModule.ModuleStates.MANUAL) {
+      //   DeAligifier.currentState = DeAligifierModule.ModuleStates.UNKNOWN;
+      // }
+
     }
 
     // Outtake
@@ -156,12 +162,28 @@ public class Robot extends TimedRobot {
     // DeAligifier
 
     if (farmSim2.getRawButtonPressed(7)) {
-      DeAligifier.request_state(DeAligifierModule.RequestStates.MANUAL);
+      // DeAligifier.request_state(DeAligifierModule.RequestStates.MANUAL);
 
       if (elevator.currentState == ElevatorModule.ModuleStates.MANUAL) {
-          elevator.currentState = ElevatorModule.ModuleStates.UNKNOWN;
+        elevator.currentState = ElevatorModule.ModuleStates.UNKNOWN;
       }
     }
+
+    // if (farmSim1.getRawButtonPressed(14)) {
+    //   DeAligifier.request_state(DeAligifierModule.RequestStates.IN);
+    // }
+
+    // if (farmSim1.getRawButtonPressed(16)) {
+    //   DeAligifier.request_state(DeAligifierModule.RequestStates.LOW);
+    // }
+
+    // if (farmSim1.getRawButtonPressed(16)) {
+    //   DeAligifier.request_state(DeAligifierModule.RequestStates.HIGH);
+    // }
+
+    // if (farmSim1.getRawButtonPressed(16)) {
+    //   DeAligifier.request_state(DeAligifierModule.RequestStates.HOME);
+    // }
 
     drivebase.update();
     outtake.update();

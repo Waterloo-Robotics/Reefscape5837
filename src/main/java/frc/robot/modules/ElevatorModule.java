@@ -61,7 +61,7 @@ public class ElevatorModule {
     private Timer homing_timer;
 
 
-    double elevator_feedforward = 0.0;
+    double elevator_feedforward = 0.02;
 
     /* Elevator PID */
     public boolean elevator_found;
@@ -101,8 +101,8 @@ public class ElevatorModule {
         this.homing_timer = new Timer();
 
         this.elevator_found = false;
-        this.pid_controller = new PIDController(0.043, 0, 0.0032);
-        this.pid_controller.setTolerance(1);
+        this.pid_controller = new PIDController(0.043, 0, 0.0036);
+        this.pid_controller.setTolerance(0.3);
         target_position = 0;
 
     }
@@ -164,7 +164,7 @@ public class ElevatorModule {
 
         switch (currentState) {
             case UNKNOWN:
-                    rightMotor.set(elevator_feedforward);
+                rightMotor.set(elevator_feedforward);
 
                 break;
 
@@ -176,10 +176,11 @@ public class ElevatorModule {
                 break;
 
             case HOMING:
-                // Let elevator fall slowly
-                rightMotor.set(0.005);
+                // Drive the elevator down
+                rightMotor.set(-0.1);
 
-                if ((rightEncoder.getVelocity() < 5 ) && homing_timer.hasElapsed(0.5))
+                // Wait for it to hit the bottom
+                if ((rightMotor.getOutputCurrent() > 5) && homing_timer.hasElapsed(0.1))
                 {
                     elevator_found = true;
                     homing_timer.stop();
@@ -187,7 +188,7 @@ public class ElevatorModule {
 
                     rightEncoder.setPosition(0);
                     leftEncoder.setPosition(0);
-                    currentState = ModuleStates.MANUAL;
+                    currentState = ModuleStates.HOME;
                 }
 
                 break;
@@ -219,6 +220,13 @@ public class ElevatorModule {
             case MOVING:
                 if (elevator_found)
                 {
+                    if (Math.abs(pid_controller.getError()) < 2)
+                    {
+                        pid_controller.setI(0.05);
+                    } else {
+                        pid_controller.setI(0);
+                    }
+
                     double pid_term = pid_controller.calculate(rightEncoder.getPosition(), target_position);
 
                     double auto_power = MathUtil.clamp(pid_term + elevator_feedforward, -0.9, 0.9);
