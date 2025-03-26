@@ -19,7 +19,6 @@ public class DeAligifierModule {
         FIND_HOME,
         HOME,
         MANUAL,
-        IN,
         LOW,
         HIGH;
     }
@@ -28,7 +27,6 @@ public class DeAligifierModule {
         FIND_HOME,
         HOME,
         MANUAL,
-        IN,
         LOW,
         HIGH;
 
@@ -44,8 +42,7 @@ public class DeAligifierModule {
     public SparkMaxConfig DeAligifierConfig;
     public RelativeEncoder DeAligifierEncoder;
 
-    private double IN = 20;
-    private double LOW = 30;
+    private double LOW = 26;
     private double HIGH = 45;
 
     public PIDController pid_controller;
@@ -96,12 +93,6 @@ public class DeAligifierModule {
 
                 break;
 
-            case IN:
-                nextState = ModuleStates.IN;
-                currentState = ModuleStates.MOVING;
-                target_position = IN;
-                break;
-
             case LOW:
                 nextState = ModuleStates.LOW;
                 currentState = ModuleStates.MOVING;
@@ -142,6 +133,7 @@ public class DeAligifierModule {
 
                 break;
 
+
             case MANUAL:
                 double power = MathUtil.applyDeadband(this.controller.getY(), 0.15, 1);
                 power = MathUtil.clamp(power, -0.3, 0.3);
@@ -151,7 +143,6 @@ public class DeAligifierModule {
 
             case MOVING:
             case HOME:
-            case IN:
             case LOW:
             case HIGH:
 

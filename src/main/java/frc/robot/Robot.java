@@ -169,23 +169,19 @@ public class Robot extends TimedRobot {
       }
     }
 
-    if (farmSim2.getRawButtonPressed(1)) {
+    if (driver_controller.getPOV() == 180) {
       DeAligifier.request_state(DeAligifierModule.RequestStates.HOME);
     }
 
-    if (farmSim2.getRawButtonPressed(2)) {
-      DeAligifier.request_state(DeAligifierModule.RequestStates.IN);
-    }
-
-    if (farmSim2.getRawButtonPressed(3)) {
+    if (driver_controller.getAButtonPressed()) {
       DeAligifier.request_state(DeAligifierModule.RequestStates.LOW);
     }
 
-    if (farmSim2.getRawButtonPressed(4)) {
+    if (driver_controller.getBButtonPressed()) {
       DeAligifier.request_state(DeAligifierModule.RequestStates.HIGH);
     }
 
-    if (farmSim1.getRawButtonPressed(10)) {
+    if (driver_controller.getStartButtonPressed()) {
       DeAligifier.request_state(DeAligifierModule.RequestStates.FIND_HOME);
     }
 
