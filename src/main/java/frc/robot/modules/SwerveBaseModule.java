@@ -9,7 +9,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -61,7 +60,7 @@ public class SwerveBaseModule {
         positions[2] = modules[2].get_module_position();
         positions[3] = modules[3].get_module_position();
 
-        this.gyro = new AHRS(SPI.Port.kMXP); 
+        this.gyro = new AHRS(SPI.Port.kMXP);
 
         this.max_drive_speed = 1 * Units.feetToMeters(16);
 
@@ -142,10 +141,10 @@ public class SwerveBaseModule {
             y_velocity_m_s = MathUtil.clamp(y_velocity_m_s, -this.max_drive_speed, this.max_drive_speed);
 
             /*
-            * Convert velocity in each axis to a general chassis velocity then use the
-            * kinematics to convert the chassic velocity to individual swerve modules
-            * "states" ie rotation and drive velocity.
-            */
+             * Convert velocity in each axis to a general chassis velocity then use the
+             * kinematics to convert the chassic velocity to individual swerve modules
+             * "states" ie rotation and drive velocity.
+             */
             ChassisSpeeds speeds = new ChassisSpeeds(x_velocity_m_s, y_velocity_m_s, rotational_vel);
 
             if (field_centric) {
@@ -188,7 +187,7 @@ public class SwerveBaseModule {
         x = MathUtil.applyDeadband(x, 0.1);
         y = MathUtil.applyDeadband(y, 0.1);
 
-        double angle = Math.atan2(y, x) * (180  / Math.PI);
+        double angle = Math.atan2(y, x) * (180 / Math.PI);
 
         SwerveModuleState[] states = {
                 new SwerveModuleState(0, Rotation2d.fromDegrees(angle)),

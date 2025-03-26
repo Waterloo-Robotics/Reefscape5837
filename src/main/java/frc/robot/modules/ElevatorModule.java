@@ -1,6 +1,5 @@
 package frc.robot.modules;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -11,9 +10,7 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.Timer;
 
 public class ElevatorModule {
@@ -60,7 +57,6 @@ public class ElevatorModule {
 
     private Timer homing_timer;
 
-
     double elevator_feedforward = 0.02;
 
     /* Elevator PID */
@@ -77,7 +73,6 @@ public class ElevatorModule {
     public ElevatorModule(int rightMotorID, int leftMotorID, Joystick drive_Controller) {
         this.currentState = initialState;
         this.nextState = ModuleStates.UNKNOWN;
-
 
         this.rightMotor = new SparkMax(rightMotorID, MotorType.kBrushless);
         this.rightEncoder = this.rightMotor.getEncoder();
@@ -110,7 +105,7 @@ public class ElevatorModule {
     public void request_state(RequestStates state) {
         this.requestedState = state;
 
-        switch(state) {
+        switch (state) {
             case FIND_HOME:
                 currentState = ModuleStates.HOMING;
                 homing_timer.restart();
@@ -180,8 +175,7 @@ public class ElevatorModule {
                 rightMotor.set(-0.1);
 
                 // Wait for it to hit the bottom
-                if ((rightMotor.getOutputCurrent() > 5) && homing_timer.hasElapsed(0.1))
-                {
+                if ((rightMotor.getOutputCurrent() > 5) && homing_timer.hasElapsed(0.1)) {
                     elevator_found = true;
                     homing_timer.stop();
                     rightMotor.set(elevator_feedforward);
@@ -218,10 +212,8 @@ public class ElevatorModule {
                 break;
 
             case MOVING:
-                if (elevator_found)
-                {
-                    if (Math.abs(pid_controller.getError()) < 2)
-                    {
+                if (elevator_found) {
+                    if (Math.abs(pid_controller.getError()) < 2) {
                         pid_controller.setI(0.05);
                     } else {
                         pid_controller.setI(0);
@@ -233,8 +225,7 @@ public class ElevatorModule {
 
                     rightMotor.set(auto_power);
 
-                    if (pid_controller.atSetpoint())
-                    {
+                    if (pid_controller.atSetpoint()) {
                         currentState = nextState;
                         rightMotor.set(elevator_feedforward);
                     }

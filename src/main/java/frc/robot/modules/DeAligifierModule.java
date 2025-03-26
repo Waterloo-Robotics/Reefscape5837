@@ -117,8 +117,7 @@ public class DeAligifierModule {
                 DeAligifierMotor.set(-0.1);
 
                 // Wait for it to hit the bottom
-                if ((DeAligifierMotor.getOutputCurrent() > 2) && homing_timer.hasElapsed(0.1))
-                {
+                if ((DeAligifierMotor.getOutputCurrent() > 2) && homing_timer.hasElapsed(0.1)) {
                     DeAligifier_found = true;
                     homing_timer.stop();
                     DeAligifierMotor.set(0);
@@ -132,7 +131,6 @@ public class DeAligifierModule {
             case UNKNOWN:
 
                 break;
-
 
             case MANUAL:
                 double power = MathUtil.applyDeadband(this.controller.getY(), 0.15, 1);
