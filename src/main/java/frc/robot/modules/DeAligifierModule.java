@@ -42,7 +42,7 @@ public class DeAligifierModule {
     public SparkMaxConfig DeAligifierConfig;
     public RelativeEncoder DeAligifierEncoder;
 
-    private double LOW = 26;
+    private double LOW = 30;
     private double HIGH = 45;
 
     public PIDController pid_controller;

@@ -62,10 +62,10 @@ public class ElevatorModule {
     /* Elevator PID */
     public boolean elevator_found;
 
-    private double L1_HEIGHT = 10;
-    private double L2_HEIGHT = 25;
-    private double L3_HEIGHT = 54;
-    private double L4_HEIGHT = 99.5;
+    private double L1_HEIGHT = 9;
+    private double L2_HEIGHT = 22.5;
+    private double L3_HEIGHT = 50;
+    private double L4_HEIGHT = 91;
 
     public PIDController pid_controller;
     public double target_position;
