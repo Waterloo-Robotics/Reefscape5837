@@ -105,7 +105,7 @@ public class SwerveBaseModule {
         double max_rot = 1;
         double min_rot = 0.3;
 
-        double drive_speed_multiplier = 0.75;
+        double drive_speed_multiplier = 0.90;
         double rotation_speed_multiplier = 1;
 
         SmartDashboard.putNumber("Drive Multiplier", drive_speed_multiplier);

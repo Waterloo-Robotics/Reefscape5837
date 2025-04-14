@@ -65,7 +65,7 @@ public class ElevatorModule {
     private double L1_HEIGHT = 9;
     private double L2_HEIGHT = 22.5;
     private double L3_HEIGHT = 50;
-    private double L4_HEIGHT = 91;
+    private double L4_HEIGHT = 91.25;
 
     public PIDController pid_controller;
     public double target_position;

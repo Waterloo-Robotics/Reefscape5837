@@ -51,6 +51,7 @@ public class Robot extends TimedRobot {
     elevator.elevator_found = true;
     autoTimer.reset();
     drivebase.gyro.reset();
+    drivebase.gyro.setAngleAdjustment(180);
     drivebase.current_state = DriveBaseStates.STOP;
     elevator.currentState = ElevatorModule.ModuleStates.MANUAL;
     autoStep = 1;
@@ -66,13 +67,14 @@ public class Robot extends TimedRobot {
     }
 
     if (autoStep == 2) {
-      if (autoTimer.hasElapsed(2)) {
+      if (autoTimer.hasElapsed(5)) {
         drivebase.current_state = DriveBaseStates.STOP;
         autoTimer.stop();
         autoStep = 3;
       }
     }
 
+    // Commented out to just drive foward
     if (autoStep == 3) {
       elevator.request_state(ElevatorModule.RequestStates.L4);
       autoStep = 4;
@@ -99,7 +101,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    drivebase.gyro.reset();
+    // drivebase.gyro.reset();
 
     drivebase.current_state = DriveBaseStates.XBOX;
     elevator.request_state(ElevatorModule.RequestStates.FIND_HOME);
@@ -108,6 +110,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    if (driver_controller.getBackButtonPressed())
+    {
+      drivebase.gyro.reset();
+    }
+
     // Elevator
     if (farmSim2.getRawButtonPressed(5) && outtake.backBeam.get()) {
       elevator.request_state(ElevatorModule.RequestStates.HOME);
